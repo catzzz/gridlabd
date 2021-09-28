@@ -27,3 +27,6 @@ azure-deploy:
 if HAVE_AZCLI
 	@echo "WARNING: azure-deploy is not implemented yet"
 endif
+
+release:
+	@echo "WARNING: make release not implemented yet"
