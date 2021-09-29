@@ -7,13 +7,14 @@ chmod -R 775 /usr/local
 chown -R root:adm /usr/local
 
 # Install needed system tools
-yum -q update -y ; 
+yum -q update -y
 yum -q clean all
 yum -q groupinstall "Development Tools" -y
 yum -q install cmake -y 
 yum -q install ncurses-devel -y
 #yum -q install epel-release -y
 yum -q install libcurl-devel -y
+yum -q install openssl-devel bzip2-devel libffi-devel zlib-devel xz-devel
 
 # python3 support needed as of 4.2
 yum -q install python37 python3-devel python3-tkinter -y
