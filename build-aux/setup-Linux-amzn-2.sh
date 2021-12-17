@@ -9,11 +9,14 @@ chown -R root:adm /usr/local
 # Install needed system tools
 yum -q update -y ; 
 yum -q clean all
+yum -q install deltaprm -y
 yum -q groupinstall "Development Tools" -y
 yum -q install cmake -y 
 yum -q install ncurses-devel -y
 #yum -q install epel-release -y
 yum -q install libcurl-devel -y
+yum install xz-devel bzip2-devel zlib-devel -y
+yum install openssl-devel -y
 
 # python3.9.x support needed as of 4.2
 #if [ ! -x /usr/local/bin/python3 -o $(/usr/local/bin/python3 --version | cut -f-2 -d.) != "Python 3.9" ]; then
@@ -31,6 +34,7 @@ yum -q install libcurl-devel -y
 	ln -sf /usr/local/bin/pip3.9 /usr/local/bin/pip3
 	curl -sSL https://bootstrap.pypa.io/get-pip.py | /usr/local/bin/python3
 	/usr/local/bin/python3 -m pip install mysql-connector mysql-client matplotlib numpy pandas Pillow networkx
+	/usr/local/bin/python3 -m pip install IPython censusdata
 #fi
 
 # mono
