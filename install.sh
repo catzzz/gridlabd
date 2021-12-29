@@ -300,6 +300,7 @@ function docker-build ()
 	fi
 	echo "--build-arg RUN_VALIDATION=$RUN_VALIDATION --build-arg NPROC=$NPROC"	
 	docker build -t gismo/gridlabd --build-arg RUN_VALIDATION=$RUN_VALIDATION --build-arg NPROC=$NPROC .
+	exit 0
 }
 
 
