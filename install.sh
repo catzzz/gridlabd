@@ -78,6 +78,56 @@ if [ -f "install.conf" ]; then
 	source "install.conf"
 fi
 
+# define docker-build 
+function docker-build ()
+{
+	echo "check docker .."
+	#check docker installation
+	if [[ $(which docker) && $(docker --version) ]]; then
+		echo "docker is installed "
+		# command
+	else
+		error "docker is not installed"
+		# command
+	fi
+
+	# check docker service 
+	if ! docker info > /dev/null 2>&1; then
+	error "This script uses docker, and it isn't running - please start docker and try again!"
+	fi
+
+	# docker variables
+	RUN_VALIDATION=no
+	if [ "$TEST" == "yes" ]; then
+		RUN_VALIDATION=$TEST
+	fi
+
+	NPROC=1
+	SYSTEM=$(uname -s)
+	
+	if [ "$PARALLEL" == "yes" ]; then
+		if [ "$SYSTEM" == "Linux" ]; then
+			NPROC=$(lscpu | grep '^CPU(s):' | cut -f2- -d' ')
+		elif [ "$SYSTEM" == "Darwin" ]; then
+			NPROC=$(sysctl -n machdep.cpu.thread_count)
+		fi
+	fi
+	echo "NPROC=$NPROC, SYSTEM=$SYSTEM"
+	
+	# check Dockerfile 
+	if [ ! -f "Dockerfile" ]; then
+		echo "copy Dockerfile to workdir"
+		cp ./docker/docker-build/Dockerfile ./Dockerfile
+		else 
+		echo "delete Dockerfile and copy from ./docker/docker-build"
+		rm -f ./Dockerfile
+		cp ./docker/docker-build/Dockerfile ./Dockerfile
+		
+	fi
+	echo "--build-arg RUN_VALIDATION=$RUN_VALIDATION --build-arg NPROC=$NPROC"	
+	docker build -t gismo/gridlabd --build-arg RUN_VALIDATION=$RUN_VALIDATION --build-arg NPROC=$NPROC .
+}
+
 # define commands that used by command line options
 function info()
 {
@@ -95,6 +145,9 @@ function info()
 	echo "UPDATE=$UPDATE"
 	echo "VERBOSE=$VERBOSE"
 }
+
+
+
 
 function help()
 {
@@ -120,6 +173,7 @@ function help()
 	  -v   --verbose         Run showing log output
 	       --validate        Run validation tests
 	       --version <name>  Override the default version name
+	  -b   --docker-build	 Build docker container
 	END
 }
 
@@ -196,6 +250,10 @@ while [ $# -gt 0 ]; do
 	(--install)
 		INSTALL="$2"
 		shift 1
+		;;
+	(-b| --docker-build)
+		docker-build
+		exit 0
 		;;
 	(*)
 		error "'$1' is not a valid option"
@@ -355,6 +413,11 @@ elif [ "$LINK" == "yes" ]; then
 	done
 	run sudo ln -sf $PREFIX/opt/gridlabd/current/bin/gridlabd.bin $PREFIX/bin/gridlabd.bin
 fi
+
+
+
+
+
 
 # all done :-)
 exit 0
