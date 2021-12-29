@@ -91,19 +91,20 @@ COPY . .
 # # RUN ./gridlabd.sh
 # WORKDIR "/usr/local/src/gridlabd"
 
-RUN autoreconf -isf && ./configure 
-RUN make -j${NPROC} system
-# numpy need to be upgrade after make system
-RUN /usr/local/bin/python3 -m pip install --upgrade numpy 
-# # #variables
-# # ENV GET_WEATHER=no
-# # ENV REMOVE_SOURCE=no
-# # ARG RUN_VALIDATION=no
-# # ENV LD_LIBRARY_PATH /usr/local/lib
-# # # get weather
-RUN if [ "${GET_WEATHER:-yes}" == "yes" ]; then make index ; fi
+# RUN autoreconf -isf && ./configure 
+# RUN make reconfigure 
+# RUN make -j${NPROC} system
+# # numpy need to be upgrade after make system
+# RUN /usr/local/bin/python3 -m pip install --upgrade numpy 
+# # # #variables
+# # # ENV GET_WEATHER=no
+# # # ENV REMOVE_SOURCE=no
+# # # ARG RUN_VALIDATION=no
+# # # ENV LD_LIBRARY_PATH /usr/local/lib
+# # # # get weather
+# RUN if [ "${GET_WEATHER:-yes}" == "yes" ]; then make index ; fi
 
-# # # run validation
-RUN if [ "${RUN_VALIDATION:-no}" == "yes" ]; then gridlabd -T ${NPROC} --validate; fi
+# # # # run validation
+# RUN if [ "${RUN_VALIDATION:-no}" == "yes" ]; then gridlabd -T ${NPROC} --validate; fi
 
 # EXPOSE 6266-6299/tcp
