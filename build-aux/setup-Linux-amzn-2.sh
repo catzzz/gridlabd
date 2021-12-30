@@ -30,7 +30,11 @@ if [ ! -x /usr/local/bin/python3 -o "$(/usr/local/bin/python3 --version | cut -f
 	ln -sf /usr/local/bin/idle3.9 /usr/local/bin/idle
 	ln -sf /usr/local/bin/pip3.9 /usr/local/bin/pip3
 	curl -sSL https://bootstrap.pypa.io/get-pip.py | /usr/local/bin/python3
+	#install python packages
 	/usr/local/bin/python3 -m pip install mysql-connector mysql-client matplotlib numpy pandas Pillow networkx
+	/usr/local/bin/python3 -m pip install IPython 
+	/usr/local/bin/python3 -m pip install wheel 
+	/usr/local/bin/python3 -m pip install censusdata
 fi
 
 # mono
