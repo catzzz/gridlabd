@@ -1,0 +1,99 @@
+FROM debian:10
+
+#!/bin/bash
+
+# Install needed system tools
+# update first
+RUN apt-get -q update
+RUN apt-get -q install tzdata -y
+
+
+RUN apt-get -q install software-properties-common -y
+RUN apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev curl -y
+RUN apt-get -q install curl -y
+# Install python 3.9.6
+RUN curl https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz > Python-3.9.6.tgz
+RUN tar xzf Python-3.9.6.tgz 
+WORKDIR "/usr/local/src/Python-3.9.6"
+RUN ./configure --prefix=/usr/local --enable-optimizations --with-system-ffi --with-computed-gotos --enable-loadable-sqlite-extensions CFLAGS="-fPIC"
+RUN make -j${NPROC}
+RUN make altinstall
+RUN /sbin/ldconfig /usr/local/lib
+RUN ln -sf /usr/local/bin/python3.9 /usr/local/bin/python3
+RUN ln -sf /usr/local/bin/python3.9-config /usr/local/bin/python3-config
+RUN ln -sf /usr/local/bin/pydoc3.9 /usr/local/bin/pydoc
+RUN ln -sf /usr/local/bin/idle3.9 /usr/local/bin/idle
+RUN ln -sf /usr/local/bin/pip3.9 /usr/local/bin/pip3
+#Python 3 pacakges
+
+RUN echo "Install Python pacakges"
+RUN /usr/local/bin/python3 -m pip install matplotlib 
+RUN /usr/local/bin/python3 -m pip install Pillow 
+RUN /usr/local/bin/python3 -m pip install pandas 
+RUN /usr/local/bin/python3 -m pip install numpy 
+RUN /usr/local/bin/python3 -m pip install networkx 
+RUN /usr/local/bin/python3 -m pip install pytz 
+RUN /usr/local/bin/python3 -m pip install pysolar 
+RUN /usr/local/bin/python3 -m pip install PyGithub 
+RUN /usr/local/bin/python3 -m pip install scikit-learn 
+RUN /usr/local/bin/python3 -m pip install xlrd 
+RUN /usr/local/bin/python3 -m pip install boto3
+RUN /usr/local/bin/python3 -m pip install IPython 
+RUN /usr/local/bin/python3 -m pip install censusdata
+WORKDIR /usr/local/src
+
+
+# install python libraries by validation
+# pip3 -q install --upgrade pip
+# pip -q install pandas matplotlib mysql-client Pillow
+
+# install system build tools needed by gridlabd
+apt-get -q install git -y
+apt-get -q install unzip -y
+apt-get -q install autoconf -y
+apt-get -q install libtool -y
+apt-get -q install g++ -y
+apt-get -q install cmake -y 
+apt-get -q install flex -y
+apt-get -q install bison -y
+apt-get -q install libcurl4-gnutls-dev -y
+apt-get -q install libncurses5-dev -y
+apt-get -q install subversion -y
+
+# doxgygen
+apt-get -q install gawk -y
+if [ ! -x /usr/bin/doxygen ]; then
+	if [ ! -d /usr/local/src/doxygen ]; then
+		git clone https://github.com/doxygen/doxygen.git /usr/local/src/doxygen
+	fi
+	if [ ! -d /usr/local/src/doxygen/build ]; then
+		mkdir /usr/local/src/doxygen/build
+	fi
+	cd /usr/local/src/doxygen/build
+	cmake -G "Unix Makefiles" ..
+	make
+	make install
+fi
+
+# mono
+apt-get -q install curl -y
+if [ ! -f /usr/bin/mono ]; then
+	cd /tmp
+	apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+	echo "deb http://download.mono-project.com/repo/ubuntu wheezy/snapshots/4.8.0 main" | tee /etc/apt/sources.list.d/mono-official.list
+	apt-get -q update -y
+	apt-get -q install mono-devel -y
+fi
+
+# natural_docs
+if [ ! -x /usr/local/bin/natural_docs ]; then
+	cd /usr/local
+	curl https://www.naturaldocs.org/download/natural_docs/2.0.2/Natural_Docs_2.0.2.zip > natural_docs.zip
+	unzip -qq natural_docs
+	rm -f natural_docs.zip
+	mv Natural\ Docs natural_docs
+	echo '#!/bin/bash
+mono /usr/local/natural_docs/NaturalDocs.exe \$*' > /usr/local/bin/natural_docs
+	chmod a+x /usr/local/bin/natural_docs
+fi
+

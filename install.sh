@@ -394,6 +394,7 @@ if [ ! -f "configure" -o "$QUICK" == "no" ]; then
 fi
 
 NPROC=1
+SYSTEM=$(uname -s)
 if [ "$PARALLEL" == "yes" ]; then
 	if [ "$SYSTEM" == "Linux" ]; then
 		NPROC=$(lscpu | grep '^CPU(s):' | cut -f2- -d' ')
