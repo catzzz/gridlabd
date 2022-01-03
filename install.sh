@@ -289,6 +289,9 @@ if [ "$CHECK" == "yes" ]; then
 	fi
 fi
 
+# export PYTHONPATH="."
+# export PATH=/usr/local/bin:$PATH
+
 # run autoconf
 if [ "$QUICK" == "no" ]; then
 	if [ ! -f "build-aux/ltmain.sh" ]; then
@@ -324,7 +327,8 @@ if [ "$PARALLEL" == "yes" ]; then
 fi
 
 # build everything
-export PATH=/usr/local/bin:/usr/bin:/bin
+export PATH=/usr/local/bin:/usr/bin:/bin:$PATH
+
 run make -j$((3*$NPROC))
 run make install
 if [ "$DOCS" == "yes" ]; then
