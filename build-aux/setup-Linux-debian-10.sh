@@ -5,7 +5,7 @@
 apt-get -q update
 apt-get -q install tzdata -y
 
-# install python 3.7
+# install python 3.9
 apt-get -q install software-properties-common -y
 apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev curl -y
 cd /tmp
